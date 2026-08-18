@@ -1,0 +1,38 @@
+## .NET build output
+bin/
+obj/
+
+## Visual Studio and VS Code user state
+.vs/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Test and coverage output
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+
+## Local development configuration and secrets
+appsettings.Development.json
+appsettings.Local.json
+*.local.json
+.env
+.env.*
+!.env.example
+secrets.json
+
+## OS files
+.DS_Store
+Thumbs.db
+
+## Generated logs and local data
+*.log
+*.db
+*.db-shm
+*.db-wal

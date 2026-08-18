@@ -1,0 +1,13 @@
+bin/
+obj/
+.git/
+.env
+.env.*
+!.env.example
+appsettings.Development.json
+appsettings.Local.json
+*.local.json
+*.db
+*.db-shm
+*.db-wal
+*.log
