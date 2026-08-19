@@ -17,6 +17,21 @@ dotnet ef migrations add <Name>
 dotnet ef database update
 ```
 
+LOCAL DATABASE CONFIGURATION
+
+Docker Compose reads PostgreSQL credentials from `.env`. The API and EF Core
+commands running directly on your machine use .NET User Secrets instead.
+
+After creating or updating `.env`, configure the matching local connection
+string once:
+
+```
+dotnet user-secrets set "ConnectionStrings:Default" "Host=localhost;Port=5432;Database=<POSTGRES_DB>;Username=<POSTGRES_USER>;Password=<POSTGRES_PASSWORD>"
+```
+
+You can then run `dotnet run`, `dotnet ef migrations add <Name>`, and
+`dotnet ef database update` without setting environment variables in the shell.
+
 NOTES
 
 Do not run `docker compose down -v` unless you want to wipe data.

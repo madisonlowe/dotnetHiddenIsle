@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace HiddenIsle.API.Models.DTOs.Agent;
 
 public class CreateAgentRequestDto
@@ -14,6 +16,8 @@ public class CreateAgentRequestDto
     public Inventory Inventory { get; set; } = new();
 
     public List<Ability> Abilities { get; set; } = new();
+
+    [Range(0, 9, ErrorMessage = "AbilityTrackXP must be between 0 and 9.")]
     public int AbilityTrackXP { get; set; } = 0;
 
     public List<MagicalProficiency> MagicalProficiencies { get; set; } = new();
