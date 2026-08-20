@@ -1,1 +1,55 @@
 @dotnetHiddenIsle_HostAddress = http://localhost:5204
+
+### Create agent
+POST {{dotnetHiddenIsle_HostAddress}}/api/Agent
+Content-Type: application/json
+
+{
+	"class": 0,
+	"agentLevel": 1,
+	"name": "Mara Venn",
+	"age": "29",
+	"culture": "Marshborn",
+	"look": "Weathered green coat, silver compass, dark curls",
+	"abilitySuits": [
+		{
+			"id": "7f44ed9d-b7e0-45c4-8993-d6d99f9a2d83",
+			"name": "Skirmish",
+			"description": "Close-quarters conflict.",
+			"skills": [
+				{
+					"id": "1ce1c2c5-b16b-405e-b499-1999f280d178",
+					"name": "Parry",
+					"description": "Deflect an incoming strike.",
+					"xp": 1,
+					"harm": "None"
+				}
+			]
+		}
+	],
+	"inventory": {
+		"load": 2,
+		"items": ["Silver compass", "Travel cloak"]
+	},
+	"abilities": [
+		{
+			"id": "bb8a13e2-5081-4b99-ac77-4d4667a2e3a0",
+			"name": "Keen Eye",
+			"description": "Notice hidden paths and details."
+		}
+	],
+	"abilityTrackXP": 1,
+	"magicalProficiencies": [],
+	"magicalSources": [],
+	"notes": "Test agent created from the HTTP client.",
+	"contacts": [],
+	"burdens": ["Old wound"],
+	"vices": ["Reckless"],
+	"virtues": ["Loyal"],
+	"ideals": ["Protect the lost"],
+	"coreSelf": {
+		"childSelf": "Wanted to map every shore.",
+		"adultSelf": "Protects travelers through dangerous waters.",
+		"fulfilledVirtues": ["Courage"]
+	}
+}

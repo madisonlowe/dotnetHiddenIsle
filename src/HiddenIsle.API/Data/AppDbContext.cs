@@ -37,6 +37,13 @@ public class AppDbContext : DbContext
                 .HasColumnName("InventoryItems")
                 .HasColumnType("text[]");
         });
+
+        agent.ToTable(table =>
+        {
+            table.HasCheckConstraint(
+                "CK_Agents_AbilityTrackXP_Range",
+                "\"AbilityTrackXP\" >= 0 AND \"AbilityTrackXP\" <= 9");
+        });
     });
 }
 }

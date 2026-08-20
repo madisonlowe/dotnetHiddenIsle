@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace HiddenIsle.API.Models;
 
 public class Agent
@@ -15,6 +17,8 @@ public class Agent
     public Inventory Inventory { get; set; } = new();
 
     public List<Ability> Abilities { get; set; } = new();
+
+    [Range(0, 9, ErrorMessage = "AbilityTrackXP must be between 0 and 9.")]
     public int AbilityTrackXP { get; set; } = 0; // max of 9 then resets to 0, increasing unlocked ability count each time
 
     public List<MagicalProficiency> MagicalProficiencies { get; set; } = new();
