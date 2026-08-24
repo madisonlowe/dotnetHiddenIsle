@@ -10,40 +10,58 @@ public class AppDbContext : DbContext
     public DbSet<Agent> Agents => Set<Agent>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
-{
-    base.OnModelCreating(modelBuilder);
-
-    modelBuilder.Entity<Agent>(agent =>
     {
-        agent.OwnsOne(a => a.CoreSelf, core =>
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<Agent>(agent =>
         {
-            core.Property(c => c.ChildSelf)
-                .HasColumnName("CoreSelfChildSelf");
+            agent.OwnsOne(a => a.CoreSelf, core =>
+            {
+                core.Property(c => c.ChildSelf)
+                    .HasColumnName("CoreSelfChildSelf");
 
-            core.Property(c => c.AdultSelf)
-                .HasColumnName("CoreSelfAdultSelf");
+                core.Property(c => c.AdultSelf)
+                    .HasColumnName("CoreSelfAdultSelf");
 
-            core.PrimitiveCollection(c => c.FulfilledVirtues)
-                .HasColumnName("CoreSelfFulfilledVirtues")
-                .HasColumnType("text[]");
+                core.PrimitiveCollection(c => c.FulfilledVirtues)
+                    .HasColumnName("CoreSelfFulfilledVirtues")
+                    .HasColumnType("text[]");
+            });
+
+            agent.OwnsOne(a => a.Inventory, inventory =>
+            {
+                inventory.Property(i => i.Load)
+                    .HasColumnName("InventoryLoad");
+
+                inventory.PrimitiveCollection(i => i.Items)
+                    .HasColumnName("InventoryItems")
+                    .HasColumnType("text[]");
+            });
+
+            agent.ToTable(table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Agents_AbilityTrackXP_Range",
+                    "\"AbilityTrackXP\" >= 0 AND \"AbilityTrackXP\" <= 9");
+
+                table.HasCheckConstraint(
+                    "CK_Agents_InventoryLoad_Range",
+                    "\"InventoryLoad\" >= 0 AND \"InventoryLoad\" <= 5");
+            });
         });
 
-        agent.OwnsOne(a => a.Inventory, inventory =>
+        modelBuilder.Entity<Contact>(contact =>
         {
-            inventory.Property(i => i.Load)
-                .HasColumnName("InventoryLoad");
+            contact.ToTable(table =>
+            {
+                table.HasCheckConstraint(
+                    "CK_Contact_Affection_Range",
+                    "\"Affection\" >= 0 AND \"Affection\" <= 6");
 
-            inventory.PrimitiveCollection(i => i.Items)
-                .HasColumnName("InventoryItems")
-                .HasColumnType("text[]");
+                table.HasCheckConstraint(
+                    "CK_Contact_Distance_Range",
+                    "\"Distance\" >= 0 AND \"Distance\" <= 3");
+            });
         });
-
-        agent.ToTable(table =>
-        {
-            table.HasCheckConstraint(
-                "CK_Agents_AbilityTrackXP_Range",
-                "\"AbilityTrackXP\" >= 0 AND \"AbilityTrackXP\" <= 9");
-        });
-    });
-}
+    }
 }

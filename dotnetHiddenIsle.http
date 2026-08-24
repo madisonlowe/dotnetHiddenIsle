@@ -13,12 +13,10 @@ Content-Type: application/json
 	"look": "Weathered green coat, silver compass, dark curls",
 	"abilitySuits": [
 		{
-			"id": "7f44ed9d-b7e0-45c4-8993-d6d99f9a2d83",
 			"name": "Skirmish",
 			"description": "Close-quarters conflict.",
 			"skills": [
 				{
-					"id": "1ce1c2c5-b16b-405e-b499-1999f280d178",
 					"name": "Parry",
 					"description": "Deflect an incoming strike.",
 					"xp": 1,
@@ -28,12 +26,11 @@ Content-Type: application/json
 		}
 	],
 	"inventory": {
-		"load": 2,
+		"load": 1,
 		"items": ["Silver compass", "Travel cloak"]
 	},
 	"abilities": [
 		{
-			"id": "bb8a13e2-5081-4b99-ac77-4d4667a2e3a0",
 			"name": "Keen Eye",
 			"description": "Notice hidden paths and details."
 		}
@@ -42,7 +39,16 @@ Content-Type: application/json
 	"magicalProficiencies": [],
 	"magicalSources": [],
 	"notes": "Test agent created from the HTTP client.",
-	"contacts": [],
+	"contacts": [
+		{
+			"affection": 4,
+			"name": "Ilyra Vale",
+			"description": "A reliable guide through the marshes.",
+			"card": "The Lantern",
+			"land": "Marshlands",
+			"distance": 1
+		}
+	],
 	"burdens": ["Old wound"],
 	"vices": ["Reckless"],
 	"virtues": ["Loyal"],
