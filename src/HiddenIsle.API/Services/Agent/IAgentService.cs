@@ -9,10 +9,19 @@ public interface IAgentService
         CreateAgentRequestDto request,
         CancellationToken cancellationToken = default);
 
-    Task<List<Agent>> GetAllAgentsAsync(
+    Task<List<AgentResponseDto>> GetAllAgentsAsync(
         CancellationToken cancellationToken = default);
 
     Task<Agent?> GetAgentByIdAsync(
+        Guid id,
+        CancellationToken cancellationToken = default);
+
+    Task<AgentResponseDto> UpdateAgentAsync(
+        Guid id,
+        UpdateAgentRequestDto request,
+        CancellationToken cancellationToken = default);
+    
+    Task DeleteAgentAsync(
         Guid id,
         CancellationToken cancellationToken = default);
 }

@@ -89,10 +89,35 @@ public class AgentService : IAgentService
         };
     }
 
-    public async Task<List<Agent>> GetAllAgentsAsync(
+    public async Task<List<AgentResponseDto>> GetAllAgentsAsync(
         CancellationToken cancellationToken = default)
     {
-        return await _db.Agents.ToListAsync(cancellationToken);
+        return await _db.Agents
+            .AsNoTracking()
+            .Select(agent => new AgentResponseDto
+            {
+                Id = agent.Id,
+                Class = agent.Class,
+                AgentLevel = agent.AgentLevel,
+                Name = agent.Name,
+                Age = agent.Age,
+                Culture = agent.Culture,
+                Look = agent.Look,
+                AbilitySuits = agent.AbilitySuits,
+                Inventory = agent.Inventory,
+                Abilities = agent.Abilities,
+                AbilityTrackXP = agent.AbilityTrackXP,
+                MagicalProficiencies = agent.MagicalProficiencies,
+                MagicalSources = agent.MagicalSources,
+                Notes = agent.Notes,
+                Contacts = agent.Contacts,
+                Burdens = agent.Burdens,
+                Vices = agent.Vices,
+                Virtues = agent.Virtues,
+                Ideals = agent.Ideals,
+                CoreSelf = agent.CoreSelf
+            })
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<Agent?> GetAgentByIdAsync(
@@ -100,5 +125,59 @@ public class AgentService : IAgentService
         CancellationToken cancellationToken = default)
     {
         return await _db.Agents.FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
+    }
+
+    // update agent by id
+        public async Task<AgentResponseDto> UpdateAgentAsync(
+        Guid id,
+        UpdateAgentRequestDto request,
+        CancellationToken cancellationToken = default)
+    {
+        var agent = await _db.Agents
+            .FirstOrDefaultAsync(agent => agent.Id == id, cancellationToken);
+
+        if (agent is null)
+        {
+            throw new KeyNotFoundException($"Agent with ID {id} not found.");
+        }
+
+        agent.Class = request.Class;
+        agent.AgentLevel = request.AgentLevel;
+        agent.Name = request.Name;
+        agent.Age = request.Age;
+        agent.Culture = request.Culture;
+        agent.Look = request.Look;
+        agent.AbilityTrackXP = request.AbilityTrackXP;
+        agent.Notes = request.Notes;
+
+        await _db.SaveChangesAsync(cancellationToken);
+
+        return new AgentResponseDto
+        {
+            Id = agent.Id,
+            Class = agent.Class,
+            AgentLevel = agent.AgentLevel,
+            Name = agent.Name,
+            Age = agent.Age,
+            Culture = agent.Culture,
+            Look = agent.Look,
+            AbilityTrackXP = agent.AbilityTrackXP,
+            Notes = agent.Notes
+        };
+    }
+
+    // delete agent by id
+    public async Task DeleteAgentAsync(
+        Guid id, 
+        CancellationToken cancellationToken = default)
+    {
+        var agent = await _db.Agents.FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
+        if (agent == null)
+        {
+            throw new KeyNotFoundException($"Agent with ID {id} not found.");
+        }
+
+        _db.Agents.Remove(agent);
+        await _db.SaveChangesAsync(cancellationToken);
     }
 }

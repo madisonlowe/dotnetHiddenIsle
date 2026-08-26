@@ -30,7 +30,6 @@ public class AgentController : ControllerBase
         );
     }
 
-    // READ ALL AGENTS
     [HttpGet]
     public async Task<ActionResult<List<Agent>>> GetAllAgents()
     {
@@ -38,7 +37,6 @@ public class AgentController : ControllerBase
         return Ok(agents);
     }
 
-    // READ AGENT BY ID
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<Agent>> GetAgentById(Guid id)
     {
@@ -47,7 +45,24 @@ public class AgentController : ControllerBase
         return Ok(agent);
     }
 
-    // UPDATE AGENT
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult<AgentResponseDto>> UpdateAgent(
+        Guid id,
+        [FromBody] UpdateAgentRequestDto request,
+        CancellationToken cancellationToken)
+    {
+        var updated = await _agentService.UpdateAgentAsync(id, request, cancellationToken);
+        if (updated is null) return NotFound();
+        return Ok(updated);
+    }
 
-    // DELETE AGENT
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> DeleteAgent(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        await _agentService.DeleteAgentAsync(id, cancellationToken);
+        return NoContent();
+    }
+    
 }
