@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace HiddenIsle.API.Models.DTOs.Agent;
+namespace HiddenIsle.API.Models.DTOs.Agents;
 
 
 public class CreateContactDTO

@@ -1,5 +1,5 @@
 using HiddenIsle.API.Models;
-using HiddenIsle.API.Models.DTOs.Agent;
+using HiddenIsle.API.Models.DTOs.Agents;
 using HiddenIsle.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,29 +19,38 @@ public class AgentController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<AgentResponseDto>> CreateAgent(
         [FromBody] CreateAgentRequestDto request,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
-        var created = await _agentService.CreateAgentAsync(request, cancellationToken);
+
+        if (request is null)
+        {
+            return BadRequest();
+        }
+
+        var createdAgent = await _agentService.CreateAgentAsync(request, cancellationToken);
 
         return CreatedAtAction(
             nameof(GetAgentById),
-            new { id = created.Id },
-            created
+            new { id = createdAgent.Id },
+            createdAgent
         );
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<Agent>>> GetAllAgents()
+    public async Task<ActionResult<List<AgentResponseDto>>> GetAllAgents(
+        CancellationToken cancellationToken = default)
     {
-        var agents = await _agentService.GetAllAgentsAsync(cancellationToken: default);
+        var agents = await _agentService.GetAllAgentsAsync(cancellationToken);
         return Ok(agents);
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<Agent>> GetAgentById(Guid id)
+    public async Task<ActionResult<AgentResponseDto>> GetAgentById(
+        Guid id, 
+        CancellationToken cancellationToken = default)
     {
-        var agent = await _agentService.GetAgentByIdAsync(id, cancellationToken: default);
-        if (agent is null) return NotFound();
+        var agent = await _agentService.GetAgentByIdAsync(id, cancellationToken);
+
         return Ok(agent);
     }
 
@@ -49,17 +58,22 @@ public class AgentController : ControllerBase
     public async Task<ActionResult<AgentResponseDto>> UpdateAgent(
         Guid id,
         [FromBody] UpdateAgentRequestDto request,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
-        var updated = await _agentService.UpdateAgentAsync(id, request, cancellationToken);
-        if (updated is null) return NotFound();
-        return Ok(updated);
+        if (request is null)
+        {
+            return BadRequest();
+        }
+
+        var updatedAgent = await _agentService.UpdateAgentAsync(id, request, cancellationToken);
+
+        return Ok(updatedAgent);
     }
 
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteAgent(
         Guid id,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
     {
         await _agentService.DeleteAgentAsync(id, cancellationToken);
         return NoContent();

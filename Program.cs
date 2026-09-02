@@ -1,4 +1,5 @@
 using HiddenIsle.API.Data;
+using HiddenIsle.API.Middleware;
 using HiddenIsle.API.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +12,9 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<IAgentService, AgentService>();
 
+builder.Services.AddExceptionHandler<NotFoundExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
@@ -19,6 +23,8 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.UseExceptionHandler();
 
 app.UseHttpsRedirection();
 

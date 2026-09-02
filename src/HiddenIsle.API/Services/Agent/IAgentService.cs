@@ -1,5 +1,5 @@
 using HiddenIsle.API.Models;
-using HiddenIsle.API.Models.DTOs.Agent;
+using HiddenIsle.API.Models.DTOs.Agents;
 
 namespace HiddenIsle.API.Services;
 
@@ -12,7 +12,7 @@ public interface IAgentService
     Task<List<AgentResponseDto>> GetAllAgentsAsync(
         CancellationToken cancellationToken = default);
 
-    Task<Agent?> GetAgentByIdAsync(
+    Task<AgentResponseDto> GetAgentByIdAsync(
         Guid id,
         CancellationToken cancellationToken = default);
 

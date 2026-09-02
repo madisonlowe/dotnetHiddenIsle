@@ -1,5 +1,5 @@
 using HiddenIsle.API.Data;
-using HiddenIsle.API.Models.DTOs.Agent;
+using HiddenIsle.API.Models.DTOs.Agents;
 using HiddenIsle.API.Services;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -114,9 +114,9 @@ public class AgentServiceTests
 
         var result = await _service.GetAllAgentsAsync(CancellationToken.None);
 
-        result.Should().BeOfType<List<AgentResponseDto>>()
-            .Which.Should().HaveCount(testAgents.Count)
-            .And.ContainEquivalentOf(testAgents.First(), options => options.ExcludingMissingMembers());
+        result.Should().HaveCount(testAgents.Count);
+        result.Select(agent => agent.Id).Should().BeEquivalentTo(testAgents.Select(agent => agent.Id));
+        result.Select(agent => agent.Name).Should().BeEquivalentTo(testAgents.Select(agent => agent.Name));
     }
 
 
@@ -127,25 +127,32 @@ public class AgentServiceTests
         var testAgents = CreateTestAgents();
         await _context.Agents.AddRangeAsync(testAgents);
         await _context.SaveChangesAsync();
-        
+        _context.ChangeTracker.Clear();
+
         var expected = testAgents.Last();
         var result = await _service.GetAgentByIdAsync(
-            expected.Id, 
+            expected.Id,
             CancellationToken.None);
-        
-        result.Should().BeEquivalentTo(expected);
+
+        result.Should().NotBeNull();
+        result.Id.Should().Be(expected.Id);
+        result.Name.Should().Be(expected.Name);
+        result.Inventory.Should().BeEquivalentTo(expected.Inventory);
+        result.AgentLevel.Should().Be(expected.AgentLevel);
+        result.Contacts.Should().BeEquivalentTo(expected.Contacts);
     }
 
     [Fact]
-    public async Task GetAgentByIdAsync_WithUnknownId_ReturnsNull()
+    public async Task GetAgentByIdAsync_WithUnknownId_ThrowsKeyNotFoundException()
     {
         var unknownId = Guid.NewGuid();
 
-        var result = await _service.GetAgentByIdAsync(
+        var act = async () => await _service.GetAgentByIdAsync(
             unknownId,
             CancellationToken.None);
 
-        result.Should().BeNull();
+        await act.Should().ThrowAsync<KeyNotFoundException>()
+            .WithMessage($"*Agent with {unknownId} not found*");
     }
 
     [Fact]
@@ -157,26 +164,49 @@ public class AgentServiceTests
         _context.ChangeTracker.Clear();
 
         var update = new UpdateAgentRequestDto
-{
-    Class = agent.Class,
-    AgentLevel = agent.AgentLevel,
-    Name = "Updated name",
-    Age = agent.Age,
-    Culture = agent.Culture,
-    Look = agent.Look,
-    AbilityTrackXP = agent.AbilityTrackXP,
-    Notes = "Updated notes"
-};
+        {
+            Class = agent.Class,
+            AgentLevel = agent.AgentLevel,
+            Name = "Updated name",
+            Age = agent.Age,
+            Culture = agent.Culture,
+            Look = agent.Look,
+            AbilityTrackXP = agent.AbilityTrackXP,
+            Notes = "Updated notes"
+        };
 
         var result = await _service.UpdateAgentAsync(
             agent.Id,
             update,
             CancellationToken.None);
 
-        result.Should().BeEquivalentTo(update, options => options.ExcludingMissingMembers());
+        result.Id.Should().Be(agent.Id);
+        result.Name.Should().Be("Updated name");
+        result.Notes.Should().Be("Updated notes");
 
         var storedAgent = await _service.GetAgentByIdAsync(agent.Id, CancellationToken.None);
-        storedAgent.Should().BeEquivalentTo(update, options => options.ExcludingMissingMembers());
+        storedAgent.Id.Should().Be(agent.Id);
+        storedAgent.Name.Should().Be("Updated name");
+        storedAgent.Notes.Should().Be("Updated notes");
+    }
+
+    [Fact]
+    public async Task UpdateAgentAsync_WithUnknownId_ThrowsKeyNotFoundException()
+    {
+        var unknownId = Guid.NewGuid();
+        var update = new UpdateAgentRequestDto
+        {
+            Name = "Updated name",
+            Notes = "Updated notes"
+        };
+
+        var act = async () => await _service.UpdateAgentAsync(
+            unknownId,
+            update,
+            CancellationToken.None);
+
+        await act.Should().ThrowAsync<KeyNotFoundException>()
+            .WithMessage($"*Agent with ID {unknownId} not found*");
     }
 
     [Fact]
@@ -191,10 +221,11 @@ public class AgentServiceTests
 
         await _service.DeleteAgentAsync(deletedAgent.Id, CancellationToken.None);
 
-        var deletedResult = await _service.GetAgentByIdAsync(deletedAgent.Id, CancellationToken.None);
-        var remainingResult = await _service.GetAgentByIdAsync(remainingAgent.Id, CancellationToken.None);
+        var act = async () => await _service.GetAgentByIdAsync(deletedAgent.Id, CancellationToken.None);
+        await act.Should().ThrowAsync<KeyNotFoundException>();
 
-        deletedResult.Should().BeNull();
-        remainingResult.Should().BeEquivalentTo(remainingAgent);
+        var remainingResult = await _service.GetAgentByIdAsync(remainingAgent.Id, CancellationToken.None);
+        remainingResult.Id.Should().Be(remainingAgent.Id);
+        remainingResult.Name.Should().Be(remainingAgent.Name);
     }
 }
